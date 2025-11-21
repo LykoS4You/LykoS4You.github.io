@@ -27,7 +27,7 @@
 <meta property="og:description" content=".interactive-story {   max-width: 800px;   margin: 0 auto;   padding: 20px;   font-family: &quot;-apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif&quot;;   line-height: 1.8;   font-size: 16p">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-11-21T02:00:00.000Z">
-<meta property="article:modified_time" content="2025-11-21T11:20:45.583Z">
+<meta property="article:modified_time" content="2025-11-21T11:28:29.183Z">
 <meta property="article:author" content="LykoS">
 <meta property="article:tag" content="交互短文">
 <meta name="twitter:card" content="summary">
@@ -201,7 +201,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2025-11-21 10:00:00 / Modified: 19:20:45" itemprop="dateCreated datePublished" datetime="2025-11-21T10:00:00+08:00">2025-11-21</time>
+      <time title="Created: 2025-11-21 10:00:00 / Modified: 19:28:29" itemprop="dateCreated datePublished" datetime="2025-11-21T10:00:00+08:00">2025-11-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -544,15 +544,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // 步骤1：引导1 → 第二段
+  // 步骤1：引导1 → 第二段（只显示第一句）
   document.getElementById('guide-1').addEventListener('click', function() {
     this.style.display = 'none';
     document.getElementById('content-2').style.display = 'block';
-    const res = showLineByLine('paragraph-2', lineIndex2);
+    // 只显示第一句，不显示后面的
+    const res = showLineByLine('paragraph-2', 0);
     lineIndex2 = res.index;
   });
 
-  // 步骤2：第二段点击 → 直接弹出下一句
+  // 步骤2：第二段点击 → 逐句显示
   document.getElementById('paragraph-2').addEventListener('click', function() {
     const res = showLineByLine('paragraph-2', lineIndex2);
     lineIndex2 = res.index;
@@ -589,15 +590,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // 步骤6：引导3 → 第四段
+  // 步骤6：引导3 → 第四段（只显示第一句）
   document.getElementById('guide-3').addEventListener('click', function() {
     this.style.display = 'none';
     document.getElementById('content-4').style.display = 'block';
-    const res = showLineByLine('paragraph-4', lineIndex4);
+    // 只显示第一句，不显示后面的
+    const res = showLineByLine('paragraph-4', 0);
     lineIndex4 = res.index;
   });
 
-  // 步骤7：第四段点击 → 直接弹出下一句
+  // 步骤7：第四段点击 → 逐句显示
   document.getElementById('paragraph-4').addEventListener('click', function() {
     const res = showLineByLine('paragraph-4', lineIndex4);
     lineIndex4 = res.index;
