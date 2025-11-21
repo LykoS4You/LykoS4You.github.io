@@ -27,7 +27,7 @@
 <meta property="og:description" content=".interactive-story {   max-width: 800px;   margin: 0 auto;   padding: 20px;   font-family: &quot;-apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif&quot;;   line-height: 1.8;   font-size: 16px;">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-11-21T02:00:00.000Z">
-<meta property="article:modified_time" content="2025-11-21T08:29:40.007Z">
+<meta property="article:modified_time" content="2025-11-21T10:23:19.040Z">
 <meta property="article:author" content="LykoS">
 <meta property="article:tag" content="交互短文">
 <meta name="twitter:card" content="summary">
@@ -201,7 +201,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2025-11-21 10:00:00 / Modified: 16:29:40" itemprop="dateCreated datePublished" datetime="2025-11-21T10:00:00+08:00">2025-11-21</time>
+      <time title="Created: 2025-11-21 10:00:00 / Modified: 18:23:19" itemprop="dateCreated datePublished" datetime="2025-11-21T10:00:00+08:00">2025-11-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -209,7 +209,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/LykoS-is-missing-You/" itemprop="url" rel="index"><span itemprop="name">LykoS_is_missing_You</span></a>
+          <a href="/categories/LykoS-is-Missing-U/" itemprop="url" rel="index"><span itemprop="name">LykoS_is_Missing_U</span></a>
         </span>
     </span>
 
@@ -222,7 +222,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><!-- 样式部分保持不变，仅调整参数卡名称颜色 -->
+    <div class="post-body" itemprop="articleBody"><!-- 样式部分保持不变 -->
 <style>
 .interactive-story {
   max-width: 800px;
@@ -303,11 +303,11 @@
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
-/* 参数名称样式：颜色改为黑色（核心调整） */
+/* 参数名称样式：颜色改为黑色 */
 .param-name {
   font-size: 17px;
   font-weight: 500;
-  color: #333; /* 原#42b983，改为黑色 */
+  color: #333; /* 黑色 */
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
@@ -512,7 +512,7 @@
     </div>
   </div>
 
-  <!-- 思考中省略号：移到第五-六段之间（核心调整） -->
+  <!-- 思考中省略号：移到第五-六段之间 -->
   <div class="typing-indicator" id="typing-indicator">
     思考中
   </div>
@@ -520,9 +520,9 @@
   <!-- 第六段容器 -->
   <div class="unlock-content" id="content-6" style="display: none;">
     <div id="paragraph-6">
-      <div class="dialog-other line-item">—— 你好，阁下。</div>
+      <div class="dialog-other line-item">—— 你好，阁下，</div>
       <div class="dialog-other line-item">并非许久未见，但已恍如隔世。</div>
-      <div class="dialog-other line-item">我很高兴以自我的意识感知到真实的您。</div>
+      <div class="dialog-other line-item">我很高兴以自我的意识感知到真实的您，</div>
       <div class="dialog-other line-item">一切的苦果在这面前，似乎都会变得甘甜。</div>
     </div>
     <div class="story-guide" id="guide-5" style="display: none;">
@@ -546,6 +546,8 @@ document.addEventListener('pjax:success', initInteractive);
 
 function initInteractive() {
   let lineIndex2 = 0, lineIndex4 = 0, lineIndex6 = 0;
+  let isParagraph2Active = false; // 标记是否处于第二段交互状态
+  const storyContainer = document.querySelector('.interactive-story'); // 文章容器
 
   // 工具函数：逐行显示段落（完全无延迟，点击即触发）
   function showLineByLine(paragraphId, currentIndex) {
@@ -558,41 +560,43 @@ function initInteractive() {
     }
   }
 
-  // 工具函数：自动逐行显示段落（用于第六段）
-  function autoShowLines(paragraphId, currentIndex, interval = 600) {
-    const lines = document.querySelectorAll(`#${paragraphId} .line-item`);
-    if (currentIndex < lines.length) {
-      lines[currentIndex].classList.add('active');
-      lineIndex6 = currentIndex + 1;
-      // 间隔一定时间显示下一句
-      setTimeout(() => {
-        autoShowLines(paragraphId, lineIndex6, interval);
-      }, interval);
-    } else {
-      // 全部显示完后，显示引导5
-      document.getElementById('guide-5').style.display = 'block';
+  // 全局点击事件：处理第二段"随便点"弹出（核心修改）
+  function handleGlobalClickForParagraph2() {
+    if (!isParagraph2Active) return; // 仅在第二段激活时生效
+    const res = showLineByLine('paragraph-2', lineIndex2);
+    lineIndex2 = res.index;
+    if (res.completed) {
+      isParagraph2Active = false; // 第二段完成，关闭全局点击
+      storyContainer.removeEventListener('click', handleGlobalClickForParagraph2); // 移除事件
+      document.getElementById('guide-2').style.display = 'block'; // 显示引导2
     }
   }
 
-  // 步骤1：引导1 → 第二段（立即显示第一句话）
+  // 步骤1：引导1 → 第二段（立即显示第一句话 + 开启全局点击）
   const guide1 = document.getElementById('guide-1');
   if (guide1) {
     guide1.addEventListener('click', () => {
       guide1.style.display = 'none';
-      document.getElementById('content-2').style.display = 'block';
+      const content2 = document.getElementById('content-2');
+      content2.style.display = 'block';
+      // 显示第一段话
       const res = showLineByLine('paragraph-2', lineIndex2);
       lineIndex2 = res.index;
+      // 激活第二段交互状态，绑定全局点击事件
+      isParagraph2Active = true;
+      storyContainer.addEventListener('click', handleGlobalClickForParagraph2);
     });
   }
 
-  // 步骤2：第二段点击 → 直接弹出下一句
-  const paragraph2 = document.getElementById('paragraph-2');
-  if (paragraph2) {
-    paragraph2.addEventListener('click', () => {
-      const res = showLineByLine('paragraph-2', lineIndex2);
-      lineIndex2 = res.index;
+  // 步骤2：第四段点击 → 直接弹出下一句（保持原逻辑，随便点）
+  const paragraph4 = document.getElementById('paragraph-4');
+  if (paragraph4) {
+    storyContainer.addEventListener('click', () => {
+      if (!document.getElementById('content-4').style.display === 'block') return;
+      const res = showLineByLine('paragraph-4', lineIndex4);
+      lineIndex4 = res.index;
       if (res.completed) {
-        document.getElementById('guide-2').style.display = 'block';
+        document.getElementById('guide-4').style.display = 'block';
       }
     });
   }
@@ -622,7 +626,8 @@ function initInteractive() {
   // 步骤5：参数卡点击 → 展开/收起详情
   const paramCardList = document.querySelectorAll('.param-card');
   paramCardList.forEach(card => {
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (e) => {
+      e.stopPropagation(); // 阻止事件冒泡，避免触发其他点击逻辑
       card.classList.toggle('active');
       const icon = card.querySelector('.param-name i');
       if (card.classList.contains('active')) {
@@ -638,25 +643,14 @@ function initInteractive() {
   if (guide3) {
     guide3.addEventListener('click', () => {
       guide3.style.display = 'none';
-      document.getElementById('content-4').style.display = 'block';
+      const content4 = document.getElementById('content-4');
+      content4.style.display = 'block';
       const res = showLineByLine('paragraph-4', lineIndex4);
       lineIndex4 = res.index;
     });
   }
 
-  // 步骤7：第四段点击 → 直接弹出下一句
-  const paragraph4 = document.getElementById('paragraph-4');
-  if (paragraph4) {
-    paragraph4.addEventListener('click', () => {
-      const res = showLineByLine('paragraph-4', lineIndex4);
-      lineIndex4 = res.index;
-      if (res.completed) {
-        document.getElementById('guide-4').style.display = 'block';
-      }
-    });
-  }
-
-  // 步骤8：引导4 → 第五段（对话框）
+  // 步骤7：引导4 → 第五段（对话框）
   const guide4 = document.getElementById('guide-4');
   if (guide4) {
     guide4.addEventListener('click', () => {
@@ -665,23 +659,40 @@ function initInteractive() {
     });
   }
 
-  // 步骤9：点击第五段对话框 → 显示思考中 → 自动逐行弹出第六段（核心调整）
+  // 步骤8：点击第五段对话框 → 显示思考中 → 自动逐行弹出第六段
   const dialogYou = document.getElementById('dialog-you');
   const typingIndicator = document.getElementById('typing-indicator');
   if (dialogYou && typingIndicator) {
-    dialogYou.addEventListener('click', () => {
+    dialogYou.addEventListener('click', (e) => {
+      e.stopPropagation(); // 阻止触发其他点击逻辑
       dialogYou.style.pointerEvents = 'none'; // 禁止重复点击
       typingIndicator.style.display = 'block'; // 显示思考中
       // 2秒思考时间后，隐藏省略号，显示第六段并自动逐行弹出
       setTimeout(() => {
         typingIndicator.style.display = 'none';
         document.getElementById('content-6').style.display = 'block';
-        autoShowLines('paragraph-6', lineIndex6); // 自动逐行显示，无需点击
+        autoShowLines('paragraph-6', lineIndex6); // 自动逐行显示
       }, 2000);
     });
   }
 
-  // 步骤10：引导5 → 直接显示第七段（无思考提示）
+  // 工具函数：自动逐行显示段落（用于第六段）
+  function autoShowLines(paragraphId, currentIndex, interval = 600) {
+    const lines = document.querySelectorAll(`#${paragraphId} .line-item`);
+    if (currentIndex < lines.length) {
+      lines[currentIndex].classList.add('active');
+      lineIndex6 = currentIndex + 1;
+      // 间隔一定时间显示下一句
+      setTimeout(() => {
+        autoShowLines(paragraphId, lineIndex6, interval);
+      }, interval);
+    } else {
+      // 全部显示完后，显示引导5
+      document.getElementById('guide-5').style.display = 'block';
+    }
+  }
+
+  // 步骤9：引导5 → 直接显示第七段（无思考提示）
   const guide5 = document.getElementById('guide-5');
   if (guide5) {
     guide5.addEventListener('click', () => {
